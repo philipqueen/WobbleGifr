@@ -16,6 +16,37 @@ class Wobbley:
         '''Initialize VideoSynchTrimmingClass'''
         pass
 
+    def get_base_path(self):
+        '''Take and validate user input for path to folder containing videos.'''
+
+        print('Enter file path for folder containing your videos (hit enter for default)')
+        while True:
+            base = input('File path: ') or '/Users/Philip/Documents/Projects/WobbleGifr' #or adds default value if enter is pressed before typing
+            # check if input is valid file path
+            if os.path.exists(base):
+                return base
+            # if input is not valid file path, print prompt and restart loop
+            else: 
+                print('Enter a valid directory path')
+                continue
+
+    def get_file_type(self):
+        '''Take and validate user input for video file type.'''
+
+        # list of common formats that ffmpeg (and thus moviepy) can deal with
+        acceptable_formats = ('.ogv', '.mp4', '.mpeg', '.avi', '.mov', '.avchd', '.wmv') #list is not exhaustive
+        
+        print('Enter file type of videos, in either upper or lower case, with or without a period (hit enter for default)')
+        while True:
+            file_type = input('File type of videos: ').lower() or 'mp4' #or adds default value if enter is pressed before typing
+            # check if input is in list of acceptable formats
+            if file_type or '.' + file_type in acceptable_formats:
+                return file_type
+            # if input is not in acceptable formats list, print prompt and restart loop
+            else:
+                print("Enter a valid file type (.mp4, .ogv, .mpeg, .avi, or .mov)")
+                continue
+
     def get_clip_list(self, base_path, file_type):
         '''Return a list of all video files in the base_path folder that match the given file type.'''
 
@@ -71,7 +102,7 @@ class Wobbley:
     def check_rates(self, rate_list):
         '''Check if audio sample rates or audio frame rates are equal, throw an exception if not (or if no rates are given).'''
         if len(rate_list) == 0:
-            raise Exception("no rates given")
+            raise Exception("no rates given, ensure path and file type inputs are correct")
         else:
             if rate_list.count(rate_list[0]) == len(rate_list):
                 print("all rates are equal to", rate_list[0])
@@ -199,9 +230,9 @@ def main():
     wobble = Wobbley()
     wobble # this may be unnecessary?
 
-    # set the base path and file type
-    base = '/Users/Philip/Documents/Projects/wobbleGifr'  # this is the folder containing your videos to sync
-    file_type = "MP4"  # should work with or without a period at the front, and in upper or lower case
+    # get user input for the base path and file type
+    base = wobble.get_base_path()
+    file_type = wobble.get_file_type()
     
     # create list of video clip in base path folder
     clip_list = wobble.get_clip_list(base, file_type)
@@ -218,7 +249,7 @@ def main():
     
     # find the lags
     lag_list = wobble.find_lags(files, wobble.check_rates(sr))
-    
+
     # use lags to trim the videos
     trimmed_videos = wobble.trim_videos(files, lag_list)
 
