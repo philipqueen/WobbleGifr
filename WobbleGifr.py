@@ -105,7 +105,7 @@ class Wobbley:
             raise Exception("no rates given, ensure path and file type inputs are correct")
         else:
             if rate_list.count(rate_list[0]) == len(rate_list):
-                print("all rates are equal to", rate_list[0])
+                print(f"all rates are equal to {rate_list[0]}")
                 return rate_list[0]
             else:
                 raise Exception("rates are not equal")
@@ -126,7 +126,7 @@ class Wobbley:
         # lag is the time shift used at the point of maximum correlation - this is the key value used for shifting our audio/video
         lag = lags[np.argmax(corr)]
     
-        print("lag:", lag)
+        print(f"lag: {lag}")
 
         return lag
 
@@ -142,7 +142,7 @@ class Wobbley:
         #the max value lag represents the latest video - thanks Oliver for figuring this out
         norm_lag_list = [(max(lag_list) - value) for value in lag_list]
    
-        print("original lag list: ", lag_list, "normalized lag list: ", norm_lag_list)
+        print(f"original lag list: {lag_list}, normalized lag list: {norm_lag_list}")
         # plot lags before and after to make visualization that this is doing what we want
         return norm_lag_list
 
@@ -224,7 +224,7 @@ def main():
     '''Create a wobble gif from the videos in the base path folder'''
 
     # start timer to measure performance
-    start_timer = time.time()
+    start_timer = time.perf_counter()
 
     # instantiate class
     wobble = Wobbley()
@@ -266,11 +266,11 @@ def main():
     wobble.construct_gif(frame_list)
 
     # end performance timer
-    end_timer = time.time()
+    end_timer = time.perf_counter()
     
     #calculate and display elapsed processing time
     elapsed_time = end_timer - start_timer
-    print("elapsed processing time in seconds:", elapsed_time)
+    print(f"elapsed processing time in seconds: {elapsed_time}")
 
 
 if __name__ == "__main__":
